@@ -37,7 +37,7 @@ namespace Statement
                 Mode = GameMode.AutoHostOrClient,
                 RoomName = $"MatchMaking",
                 ScenePath = "battle_scene_01",
-                SceneIndex = 4,
+                SceneIndex = 2,
                 ProvideInput = true,
                 TargetPlayerCount = 2
             };

@@ -2,6 +2,7 @@ using Client;
 using UnityEngine;
 using Leopotam.EcsLite;
 using Statement;
+using System;
 
 public class BattlePanel : SourcePanel
 {
@@ -11,26 +12,29 @@ public class BattlePanel : SourcePanel
     EcsWorld world;
     EcsPool<InputMovementComponent> _movePool = default;
     EcsPool<InputAimComponent> _aimPool = default;
-
-    public override void Init(SourceCanvas canvasParent)
+     
+    public override void OnOpen(params Action[] onComplete)
     {
-        base.Init(canvasParent);
+        base.OnOpen(onComplete);
 
         world = BattleState.Instance.EcsHandler.World;
 
-        _movePool = world.GetPool<InputMovementComponent>();
-        _aimPool = world.GetPool<InputAimComponent>();
+        if (!BattleState.Instance.TryGetEntity("input", out int entity))
+        {
+            _movePool = world.GetPool<InputMovementComponent>();
+            _aimPool = world.GetPool<InputAimComponent>();
 
-        var inputEntity = world.NewEntity();
+            var inputEntity = world.NewEntity();
 
-        world.GetPool<InputComponent>().Add(inputEntity);
+            world.GetPool<InputComponent>().Add(inputEntity);
 
-        BattleState.Instance.AddEntity("input", inputEntity);
+            BattleState.Instance.AddEntity("input", inputEntity);
 
-        movementJoystick.OnJoystickDown += OnInputDown;
-        movementJoystick.OnJoystickUp += OnInputUp;
-        aimJoystick.OnJoystickDown += OnInputDown;
-        aimJoystick.OnJoystickUp += OnInputUp;
+            movementJoystick.OnJoystickDown += OnInputDown;
+            movementJoystick.OnJoystickUp += OnInputUp;
+            aimJoystick.OnJoystickDown += OnInputDown;
+            aimJoystick.OnJoystickUp += OnInputUp; 
+        } 
     }
 
     public override void OnDipose()

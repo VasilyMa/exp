@@ -17,9 +17,7 @@ namespace Statement
 
         public override void Awake()
         {
-            InitEcsHandler();
-
-            InitCanvas();
+            InitEcsHandler(); 
         }
 
         public override void Start()
@@ -55,9 +53,7 @@ namespace Statement
         public override void OnStarted()
         { 
             base.OnStarted();
-
-            InvokeCanvas<BattleCanvas>().OpenPanel<BattlePanel>();
-
+             
             SendPlayerSpawnEvent();
         }
 

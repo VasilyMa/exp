@@ -8,6 +8,7 @@ using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations; 
 using UnityEngine.SceneManagement;
 using Statement;
+using System.Threading.Tasks;
 
 public class PhotonRunHandler : NetworkBehaviour
 {
@@ -80,6 +81,53 @@ public class PhotonRunHandler : NetworkBehaviour
     }
 
     [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+    public async void StartGameSceneRPC(byte[] rawData)
+    {
+        try
+        {
+            SessionData = MemoryPackSerializer.Deserialize<NetworkSessionData>(rawData);
+
+            // Подготовка перед выгрузкой сцены
+            await PrepareForSceneUnloadAsync();
+
+            // Создаём и используем SceneProviderModule
+            var sceneProvider = new SceneProviderModule();
+
+            // Опционально подписываемся на прогресс (если нужно)
+            sceneProvider.ProgressChanged += progress =>
+            {
+                Debug.Log($"Loading progress: {progress * 100f:0.0}%");
+                // Можно обновить UI
+            };
+
+            // Загружаем сцену по пути, ждём завершения
+            await sceneProvider.LoadSceneAsync(SessionData.ScenePath, LoadSceneMode.Single);
+
+            Debug.Log($"[PhotonRunHandler] Scene loaded: {SessionData.ScenePath}");
+
+            // Инициализация после загрузки сцены
+            await InitializeScenePostLoadAsync();
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"[PhotonRunHandler] Scene RPC failed: {ex}");
+        }
+    }
+
+    // Асинхронная версия PrepareForSceneUnload
+    private Task PrepareForSceneUnloadAsync()
+    {
+        BattleState.Instance?.ShutdownEcsHandler();
+        return Task.CompletedTask; // здесь можно вставить await, если будут async операции
+    }
+
+    // Асинхронная версия InitializeScenePostLoad
+    private Task InitializeScenePostLoadAsync()
+    {
+        BattleState.Instance?.OnSceneLoaded();
+        return Task.CompletedTask;
+    }
+    /*[Rpc(RpcSources.StateAuthority, RpcTargets.All)]
     public void StartGameSceneRPC(byte[] rawData)
     {
         try
@@ -120,5 +168,5 @@ public class PhotonRunHandler : NetworkBehaviour
     {
         BattleState.Instance?.OnSceneLoaded();
         yield return null;
-    }
+    }*/
 }

@@ -106,37 +106,38 @@ namespace Statement
         }
 
         /*
-                public virtual void AddEntity(string localKey, string netKey, int entity)
-                {
-                    if (dictionaryEntities.ContainsKey(key)) return;
+        public virtual void AddEntity(string localKey, string netKey, int entity)
+        {
+            if (dictionaryEntities.ContainsKey(key)) return;
 
-                    dictionaryEntities.Add(key, EcsHandler.World.PackEntity(entity));
+            dictionaryEntities.Add(key, EcsHandler.World.PackEntity(entity));
+        }
+        public virtual bool TryGetEntity(string key, out EcsPackedEntity packedEntity)
+        {
+            if (dictionaryEntities.ContainsKey(key))
+            {
+                packedEntity = dictionaryEntities[key];
+                return true;
+            }
+
+            packedEntity = default(EcsPackedEntity);
+            return false;
+        }
+        public virtual bool TryGetEntity(string key, out int unpackedEntity)
+        {
+            if (dictionaryEntities.ContainsKey(key))
+            {
+                if (dictionaryEntities[key].Unpack(EcsHandler.World, out int entity))
+                {
+                    unpackedEntity = entity;
+                    return true;
                 }
-                public virtual bool TryGetEntity(string key, out EcsPackedEntity packedEntity)
-                {
-                    if (dictionaryEntities.ContainsKey(key))
-                    {
-                        packedEntity = dictionaryEntities[key];
-                        return true;
-                    }
+            }
 
-                    packedEntity = default(EcsPackedEntity);
-                    return false;
-                }
-                public virtual bool TryGetEntity(string key, out int unpackedEntity)
-                {
-                    if (dictionaryEntities.ContainsKey(key))
-                    {
-                        if (dictionaryEntities[key].Unpack(EcsHandler.World, out int entity))
-                        {
-                            unpackedEntity = entity;
-                            return true;
-                        }
-                    }
-
-                    unpackedEntity = -1;
-                    return false;
-                }*/
+            unpackedEntity = -1;
+            return false;
+        }
+        */
 
         public void SendRequest<TRequest>(TRequest request) where TRequest : struct, IRequestable
         {

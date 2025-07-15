@@ -1,3 +1,5 @@
+using MemoryPack;
+using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -11,20 +13,18 @@ namespace Statement
             {
                 return (InitState)State.Instance;
             }
-        }
-#if UNITY_EDITOR
-        [UnityEngine.SerializeField] UnityEditor.SceneAsset TargetScene;
-#endif
-        [SerializeField] private string targetSceneName; 
+        } 
         public override void Awake()
         {
-            InitCanvas();
-        }
-        public override void Start()
-        {
+            UIModule.Initialize();
+
             EntityModule.Initialize();
 
             ConfigModule.Initialize(this, onConfigLoaded);
+        }
+        public override void Start()
+        {
+
         }
         public override void Update()
         {
@@ -34,18 +34,26 @@ namespace Statement
         {
 
         }
-        void onConfigLoaded()
+        async void onConfigLoaded()
         {
-            SceneManager.LoadScene(targetSceneName);
-        }
-#if UNITY_EDITOR
-        private void OnValidate()
-        {
-            if (TargetScene)
-            {
-                targetSceneName = TargetScene.name;
+            try
+            { 
+                var sceneProvider = new SceneProviderModule();
+
+                // Опционально подписываемся на прогресс (если нужно)
+                sceneProvider.ProgressChanged += progress =>
+                {
+                    Debug.Log($"Loading progress: {progress * 100f:0.0}%");
+                    // Можно обновить UI
+                };
+
+                // Загружаем сцену по пути, ждём завершения
+                await sceneProvider.LoadSceneAsync(1, LoadSceneMode.Single); 
             }
-        }
-#endif
+            catch (Exception ex)
+            {
+                Debug.LogError($"[PhotonRunHandler] Scene RPC failed: {ex}");
+            }
+        } 
     }
 }

@@ -27,7 +27,7 @@ namespace Statement
 
         public virtual void Awake()
         {
-            InitCanvas();
+
         }
         public abstract void Start();
         public abstract void Update();
@@ -35,89 +35,7 @@ namespace Statement
         public virtual void OnDestroy()
         {
             _canvases?.ForEach(_canvas => _canvas.Dispose());
-        }
-        protected virtual void InitCanvas()
-        {
-            _canvases = new List<SourceCanvas>();
-
-            var canveses = FindObjectsOfType<SourceCanvas>();
-
-            for (int i = 0; i < canveses.Length; i++)
-            {
-                _canvases.Add(canveses[i]);
-            } 
-
-            _canvases.ForEach(canvas => canvas.Init());
-        }
-
-        public virtual T InvokeCanvas<T>() where T : SourceCanvas
-        {
-            SourceCanvas returnedCanvas = null;
-
-            foreach (var canvas in _canvases)
-            {
-                if (canvas is T returned)
-                {
-                    returnedCanvas = returned;
-                }
-                else
-                {
-                    canvas.CloseCanvas();
-                }
-            }
-
-            returnedCanvas.InvokeCanvas();
-
-            return returnedCanvas as T;
-        }
-
-        public virtual T InvokeCanvas<T, M>() where T : SourceCanvas where M : SourceCanvas
-        {
-            SourceCanvas returnedCanvas = null;
-
-            foreach (var canvas in _canvases)
-            {
-                if (canvas is T returned)
-                {
-                    returnedCanvas = returned;
-                }
-                else if (canvas is M)
-                {
-                    continue;
-                }
-                else
-                {
-                    canvas.CloseCanvas();
-                }
-            }
-
-            returnedCanvas.InvokeCanvas();
-
-            return returnedCanvas as T;
-        }
-
-        public virtual T GetCanvas<T>() where T : SourceCanvas
-        {
-            foreach (var canvas in _canvases)
-            {
-                if (canvas is T returned)
-                {
-                    return returned as T;
-                }
-            }
-
-            return null;
-        }
-
-        public virtual bool IsInitedCanvses()
-        {
-            return _canvases != null && !_canvases.Any(canvas => !canvas.isInited);  // Проверяем, инициализированы ли все канвасы
-        }
-        protected virtual void DisposeCanvas()
-        {
-            _canvases.ForEach(canvas => canvas.Dispose());
-        }
-
+        } 
         public virtual Coroutine RunCoroutine(IEnumerator coroutine, Action callback = null)
         {
             if (Instance != null)
@@ -154,11 +72,6 @@ namespace Statement
             {
                 callback[i]?.Invoke();
             }
-        }
-
-        public void RequestLoadingScene(int index)
-        {
-            SceneManager.LoadScene(index);
         }
     }
 }

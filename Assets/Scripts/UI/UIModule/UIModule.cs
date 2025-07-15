@@ -60,7 +60,7 @@ public static class UIModule
         return result;
     }
 
-    public static bool TrGetCanvas<T>(out T canvas) where T : SourceCanvas
+    public static bool TryGetCanvas<T>(out T canvas) where T : SourceCanvas
     {
         if (Handler.TryGetCanvas(out canvas))
         {
