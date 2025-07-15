@@ -5,7 +5,8 @@ using UnityEditor;
 
 [CustomEditor(typeof(Joystick), true)]
 public class JoystickEditor : Editor
-{
+{   
+    private SerializedProperty Type;
     private SerializedProperty handleRange;
     private SerializedProperty deadZone;
     private SerializedProperty axisOptions;
@@ -25,6 +26,7 @@ public class JoystickEditor : Editor
         snapY = serializedObject.FindProperty("snapY");
         background = serializedObject.FindProperty("background");
         handle = serializedObject.FindProperty("handle");
+        Type = serializedObject.FindProperty("type");
     }
 
     public override void OnInspectorGUI()
@@ -54,6 +56,7 @@ public class JoystickEditor : Editor
         EditorGUILayout.PropertyField(axisOptions, new GUIContent("Axis Options", "Which axes the joystick uses."));
         EditorGUILayout.PropertyField(snapX, new GUIContent("Snap X", "Snap the horizontal input to a whole value."));
         EditorGUILayout.PropertyField(snapY, new GUIContent("Snap Y", "Snap the vertical input to a whole value."));
+        EditorGUILayout.PropertyField(Type, new GUIContent("Type of input"));
     }
 
     protected virtual void DrawComponents()
